@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ConsoleShoppingApp/ConsoleShoppingApp.iml" filepath="$PROJECT_DIR$/ConsoleShoppingApp/ConsoleShoppingApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Java Course.iml" filepath="$PROJECT_DIR$/.idea/Java Course.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week2_HW/Week2_HW.iml" filepath="$PROJECT_DIR$/Week2_HW/Week2_HW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week2_Sat_HW/Week2_Sat_HW.iml" filepath="$PROJECT_DIR$/Week2_Sat_HW/Week2_Sat_HW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week3_Sat_HW/Week3_Sat_HW.iml" filepath="$PROJECT_DIR$/Week3_Sat_HW/Week3_Sat_HW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week3_Wed_HW/Week3_Wed_HW.iml" filepath="$PROJECT_DIR$/Week3_Wed_HW/Week3_Wed_HW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week4_Wed_HW_CodingChallenge/Week4_Wed_HW_CodingChallenge.iml" filepath="$PROJECT_DIR$/Week4_Wed_HW_CodingChallenge/Week4_Wed_HW_CodingChallenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week4_Wed_HW_OOP/Week4_Wed_HW_OOP.iml" filepath="$PROJECT_DIR$/Week4_Wed_HW_OOP/Week4_Wed_HW_OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week5_Wed_HW_CodingChallenge/Week5_Wed_HW_CodingChallenge.iml" filepath="$PROJECT_DIR$/Week5_Wed_HW_CodingChallenge/Week5_Wed_HW_CodingChallenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week5_Wed_HW_OOP/Week5_Wed_HW_OOP.iml" filepath="$PROJECT_DIR$/Week5_Wed_HW_OOP/Week5_Wed_HW_OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week_6_CodingChallenge/Week_6_CodingChallenge.iml" filepath="$PROJECT_DIR$/Week_6_CodingChallenge/Week_6_CodingChallenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week_6_OOP/Week_6_OOP.iml" filepath="$PROJECT_DIR$/Week_6_OOP/Week_6_OOP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week_7_Algo/Week_7_Algo.iml" filepath="$PROJECT_DIR$/Week_7_Algo/Week_7_Algo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week_7_CodingChallenge/Week_7_CodingChallenge.iml" filepath="$PROJECT_DIR$/Week_7_CodingChallenge/Week_7_CodingChallenge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Week_9_Sat_Algo/Week_9_Sat_Algo.iml" filepath="$PROJECT_DIR$/Week_9_Sat_Algo/Week_9_Sat_Algo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
+    </modules>
+  </component>
+</project>
