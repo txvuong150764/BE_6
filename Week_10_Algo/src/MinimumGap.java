@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class minimumGap {
+public class MinimumGap {
     public static int minimumGap(int[] a) {
         int ans = Integer.MAX_VALUE;
 
