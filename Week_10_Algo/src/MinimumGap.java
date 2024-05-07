@@ -19,7 +19,7 @@ public class MinimumGap {
         return ans;
     }
     public static void main(String[] args) {
-        int[] a = {7, 1, 3, 4, 1, 1, 7};
+        int[] a = {7, 1, 3, 4, 1, 1, 2, 7};
         System.out.println(minimumGap(a));
     }
 }
