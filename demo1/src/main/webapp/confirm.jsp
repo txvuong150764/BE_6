@@ -10,13 +10,19 @@
 <h1>Confirmation of registration</h1>
 <form action="result" method="post">
     <p>Username: ${param.username} </p>
-    <input type="text" name="username" value = ${param.username} hidden=true>
+    <label>
+        <input type="text" name="username" value = ${param.username} hidden=true>
+    </label>
     <br>
     <p>Password: ${param.password} </p>
-    <input type="text" name="password" value=${param.password} hidden=true>
+    <label>
+        <input type="text" name="password" value=${param.password} hidden=true>
+    </label>
     <br>
     <p>Gender: ${param.gender} </p>
-    <input type="text" name="gender" value =${param.gender} hidden=true>
+    <label>
+        <input type="text" name="gender" value =${param.gender} hidden=true>
+    </label>
     <br>
     <% String[] hobbies = request.getParameterValues("hobbies");
         String concat_hobbies="";
