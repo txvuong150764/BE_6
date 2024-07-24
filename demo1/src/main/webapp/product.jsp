@@ -37,5 +37,6 @@
         }
     %>
     <p>This is product page. Hello <%= username != null ? username : "" %></p>
+    <a href="homepage.jsp">Go back to homepage</a>
 </body>
 </html>

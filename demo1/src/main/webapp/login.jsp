@@ -8,12 +8,21 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    if (session.getAttribute("id") != null) {
+    session = request.getSession(false);
+
+    String logout = request.getParameter("logout");
+    if (logout != null) {
+        session.invalidate();
+    }
+
+    session = request.getSession(true);
+
+    if (session != null && session.getAttribute("id") != null) {
         // User is logged in, redirect to homepage
-        response.sendRedirect(request.getContextPath() + "/homepage.jsp");
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
+        response.sendRedirect(request.getContextPath() + "/homepage.jsp");
         return;
     }
 %>
@@ -25,14 +34,10 @@
 <body>
     <%
         String error = request.getParameter("error");
-        String logout = request.getParameter("logout");
+
         if (error != null) {
             PrintWriter out1 = response.getWriter();
             out1.println("<h1>" + "Username or Password is incorrect" + "</h1>");
-        }
-
-        if (logout != null) {
-            session.invalidate();
         }
     %>
     <form action="homepage.jsp" method="post">
