@@ -9,6 +9,9 @@
 <html>
 <head>
     <title>JSP - Hello World</title>
+    <script>
+        history.forward();
+    </script>
 </head>
 <body>
 <h1><%= "Hello World!" %>
@@ -18,24 +21,35 @@
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        try {
-            Connection connection = DatabaseConnection.initializeDatabaseConnection();
+        if(username != null && password != null) {
+            try {
+                Connection connection = DatabaseConnection.initializeDatabaseConnection();
 
-            String query = "SELECT id FROM users WHERE username = ? AND password = ?";
+                String query = "SELECT id FROM users WHERE username = ? AND password = ?";
 
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, username);
-                statement.setString(2, password);
-                ResultSet rs = statement.executeQuery();
-                if (!rs.next()) {
-                    response.sendRedirect("error.jsp");
+                try (PreparedStatement statement = connection.prepareStatement(query)) {
+                    statement.setString(1, username);
+                    statement.setString(2, password);
+                    ResultSet rs = statement.executeQuery();
+                    if (!rs.next()) {
+                        response.sendRedirect("login.jsp?error=true");
+                    }
+                    session.setAttribute("id", rs.getInt("id"));
                 }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     %>
 
-    <h1>Welcome <%= username %></h1>
+    <h1>Welcome <%= username != null ? username : ""%></h1>
+    <% if(session.getAttribute("id") == null) { %>
+        <a href="login.jsp">Login</a>
+    <% } %>
+    <a href="product.jsp">Product</a>
+    <% if(session.getAttribute("id") != null) { %>
+        <a href="login.jsp?logout=true">Logout</a>
+    <% } %>
+    <br/>
 </body>
 </html>
