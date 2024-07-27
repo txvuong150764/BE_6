@@ -13,6 +13,12 @@
     String logout = request.getParameter("logout");
     if (logout != null) {
         session.removeAttribute("id");
+        session.removeAttribute("username");
+
+        Cookie rememberMeCookie = new Cookie("remember-me", null);
+        rememberMeCookie.setMaxAge(0);
+        rememberMeCookie.setHttpOnly(true);
+        response.addCookie(rememberMeCookie);
     }
 
     session = request.getSession(true);

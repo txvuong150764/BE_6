@@ -1,8 +1,9 @@
 <%@ page import="com.example.demo1.DatabaseConnection" %>
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.LocalDateTime" %>
+<%@ page import="com.example.demo1.TokenGenerator" %>
+<%@ page import="java.net.http.HttpRequest" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -13,84 +14,134 @@
     </script>
 </head>
 <body>
-<h1><%= "Hello World!" %>
-</h1>
+<h1><%= "Hello World!" %></h1>
 <br/>
-    <%
-        Connection connection = null;
-        try {
-            connection = DatabaseConnection.initializeDatabaseConnection();
+<%
+    Connection connection = null;
+    try {
+        connection = DatabaseConnection.initializeDatabaseConnection();
 
-            String query = "SELECT * FROM most_recent_user WHERE create_time = (SELECT max(create_time) FROM most_recent_user)";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                ResultSet rs = statement.executeQuery();
-                if (rs.next()) {
-                    session.setAttribute("id", rs.getInt("userId"));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        // Check and set recent user session
+        setRecentUserSession(session, connection, request);
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String sessionId = session.getId();
+        String token = TokenGenerator.generateToken();
 
-        if(username != null && password != null) {
-            try {
-                String query = "SELECT id FROM users WHERE username = ? AND password = ?";
-
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setString(1, username);
-                    statement.setString(2, password);
-                    ResultSet rs = statement.executeQuery();
-                    if (!rs.next()) {
-                        response.sendRedirect("login.jsp?error=true");
-                    }
-
-                    try (PreparedStatement statement1 = connection.prepareStatement("INSERT INTO most_recent_user (cookie, create_time, userId) VALUES (?, ?, ?)")) {
-                        statement1.setString(1, sessionId);
-                        statement1.setTimestamp(2, Timestamp.valueOf(java.time.LocalDateTime.now()));
-                        statement1.setInt(3, rs.getInt("id"));
-                        statement1.executeUpdate();
-                    }
-                    catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    session.setAttribute("id", rs.getInt("id"));
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        if (username != null && password != null) {
+            // Validate user and manage session
+            if (validateUser(username, password, session, token, connection, response)) {
+                response.sendRedirect("homepage.jsp");
+                return;
+            } else {
+                response.sendRedirect("login.jsp?error=true");
+                return;
             }
-        }
-        else {
-            if(session.getAttribute("id") != null) {
+        } else {
+            // Get username for existing session
+            if (session.getAttribute("id") != null) {
                 int id = (int) session.getAttribute("id");
-                try {
-                    String query = "SELECT username FROM users WHERE id = ?";
-
-                    try (PreparedStatement statement = connection.prepareStatement(query)) {
-                        statement.setString(1, String.valueOf(id));
-                        ResultSet rs = statement.executeQuery();
-                        rs.next();
-                        username = rs.getString("username");
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                username = getUsernameById(id, connection);
+                session.setAttribute("username", username);
             }
         }
-    %>
-    <p>Session Id: <%=sessionId%></p>
-    <h1>Welcome <%= username != null ? username : ""%></h1>
-    <% if(session.getAttribute("id") == null) { %>
-        <a href="login.jsp">Login</a>
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    } finally {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+%>
+    <p>Session Id: <%=session.getId()%></p>
+    <h1>Welcome <%= session.getAttribute("username") != null ? session.getAttribute("username") : "" %></h1>
+    <% if (session.getAttribute("id") == null) { %>
+    <a href="login.jsp">Login</a>
     <% } %>
     <a href="product.jsp">Product</a>
-    <% if(session.getAttribute("id") != null) { %>
-        <a href="login.jsp?logout=true">Logout</a>
+    <% if (session.getAttribute("id") != null) { %>
+    <a href="login.jsp?logout=true">Logout</a>
     <% } %>
     <br/>
 </body>
 </html>
+
+<%!
+    private void setRecentUserSession(HttpSession session, Connection connection, HttpServletRequest request) throws SQLException {
+        if (session.getAttribute("id") == null) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("remember-me".equals(cookie.getName())) {
+                        String token = cookie.getValue();
+                        int id = getUserIdFromToken(token, connection);
+                        if (id != -1) {
+                            session.setAttribute("id", id);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean validateUser(String username, String password, HttpSession session, String token, Connection connection, HttpServletResponse response) throws SQLException {
+        String query = "SELECT id FROM users WHERE username = ? AND password = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                int userId = rs.getInt("id");
+                saveMostRecentUser(token, userId, connection);
+
+                Cookie rememberMeCookie = new Cookie("remember-me", token);
+                rememberMeCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                rememberMeCookie.setHttpOnly(true);
+                response.addCookie(rememberMeCookie);
+
+                session.setAttribute("id", userId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void saveMostRecentUser(String token, int userId, Connection connection) throws SQLException {
+        String query = "INSERT INTO most_recent_user (cookie, create_time, userId) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, token);
+            statement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            statement.setInt(3, userId);
+            statement.executeUpdate();
+        }
+    }
+
+    private String getUsernameById(int id, Connection connection) throws SQLException {
+        String query = "SELECT username FROM users WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        }
+        return null;
+    }
+
+    private int getUserIdFromToken(String token, Connection connection) throws SQLException {
+        String query = "SELECT userId FROM most_recent_user WHERE token = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, token);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("userId");
+            }
+        }
+        return -1;
+    }
+%>
