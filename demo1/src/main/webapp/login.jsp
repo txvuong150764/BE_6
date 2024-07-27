@@ -12,7 +12,7 @@
 
     String logout = request.getParameter("logout");
     if (logout != null) {
-        session.invalidate();
+        session.removeAttribute("id");
     }
 
     session = request.getSession(true);
