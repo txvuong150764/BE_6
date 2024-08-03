@@ -1,3 +1,4 @@
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="java.sql.Connection" %>
 <%@ page import="com.example.demo1.DatabaseConnection" %>
 <%@ page import="java.sql.PreparedStatement" %>
@@ -37,6 +38,18 @@
         }
     %>
     <p>This is product page. Hello <%= username != null ? username : "" %></p>
+
+    <a href="products?category=food">Food</a>
+    <a href="products?category=drink">Drink</a>
+    <a href="products?category=fruit">Fruit</a>
+
+    <c:forEach items="${products}" var="product">
+        <h3>${product.name}</h3>
+        <h3>${product.price}</h3><br/>
+    </c:forEach>
+
     <a href="homepage.jsp">Go back to homepage</a>
+
+
 </body>
 </html>
