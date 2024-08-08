@@ -13,8 +13,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Error</title>
+    <title>Products</title>
 </head>
+<style>
+    table, th, td {
+        border:1px solid black;
+    }
+</style>
 <body>
     <h1>Product Page</h1>
     <%
@@ -43,12 +48,24 @@
     <a href="products?category=drink">Drink</a>
     <a href="products?category=fruit">Fruit</a>
 
-    <c:forEach items="${products}" var="product">
-        <h3>${product.name}</h3>
-        <h3>${product.price}</h3><br/>
-    </c:forEach>
 
-    <a href="homepage.jsp">Go back to homepage</a>
+    <table>
+        <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Detail</th>
+        </tr>
+        <c:forEach items="${products}" var="product">
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.price}</td>
+                <td><a href="products/${product.id}">More</a></td>
+            </tr>
+        </c:forEach>
+    </table>
+
+
+    <a href="./homepage">Go back to homepage</a>
 
 
 </body>

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.io.PrintWriter" %><%--
   Created by IntelliJ IDEA.
   User: Tran Xuan Vuong
@@ -7,47 +8,14 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%
-    session = request.getSession(false);
-
-    String logout = request.getParameter("logout");
-    if (logout != null) {
-        session.removeAttribute("id");
-        session.removeAttribute("username");
-
-        Cookie rememberMeCookie = new Cookie("remember-me", null);
-        rememberMeCookie.setMaxAge(0);
-        rememberMeCookie.setHttpOnly(true);
-        response.addCookie(rememberMeCookie);
-    }
-
-    session = request.getSession(true);
-
-    if (session != null && session.getAttribute("id") != null) {
-        // User is logged in, redirect to homepage
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
-        response.sendRedirect(request.getContextPath() + "/homepage.jsp");
-        return;
-    }
-%>
-
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-    <%
-        String error = request.getParameter("error");
-
-        if (error != null) {
-            PrintWriter out1 = response.getWriter();
-            out1.println("<h1>" + "Username or Password is incorrect" + "</h1>");
-        }
-    %>
-    <form action="homepage.jsp" method="post">
+    <form action="login" method="post">
         <h1>Login</h1>
+        <c:out value="${errorMessage}"/>
         <br/>
         <label for="username">Username</label>
         <input type="text" name="username" id="username" placeholder="Username" required>
